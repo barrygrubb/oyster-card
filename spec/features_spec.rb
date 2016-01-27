@@ -1,6 +1,7 @@
 
 require "oystercard"
 require "station"
+require "journey"
 
 describe OysterCard do
 	subject {described_class.new}
@@ -29,5 +30,20 @@ describe OysterCard do
 			subject.touch_out(exit_station)
 			expect(subject.journeys).to eq ({entry_station => exit_station})
 		end
+  end
 
+	describe Journey do
+		let(:entry_station) {double :entry_station}
+		let(:exit_station) {double :exit_station}
+
+   it 'charges a penalty fare if you forget to touch out' do
+		  # In order to be charged correctly
+      # As a customer
+		  # I need a penalty charge deducted if I fail to touch in or out
+
+      card = OysterCard.new
+			card.top_up(10)
+			card.touch_in(entry_station)
+			expect{card.touch_in(entry_station)}.to change{card.balance}.by (-6)
+	end
 end
