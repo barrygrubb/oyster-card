@@ -43,10 +43,23 @@ describe OysterCard do
 			it 'holds a hash of journeys' do
 				expect(subject.journeys).to eq({})
 			end
+
+			it 'Stores the station information'	do
+			# In order to know how far I have travelled
+			# As a customer
+			# I want to know what zone a station is in
+
+			station1 = Station.new("Station1", 1)
+			station2 = Station.new("Station2", 2)
+			subject.touch_in(station1)
+			subject.touch_out(station2)
+			expect(subject.journeys).to eq ({station1 => station2})
+    end
 	end
 
 	  it "require a minimum fare of 1" do
       expect{ subject.touch_in(entry_station)}.to raise_error "minimum fare is #{OysterCard::MIN_FARE} pound"
     end
+
 
 end

@@ -1,5 +1,7 @@
 
 require "oystercard"
+require "station"
+
 describe OysterCard do
 	subject {described_class.new}
 	let(:entry_station) {double :entry_station}
@@ -27,6 +29,5 @@ describe OysterCard do
 			subject.touch_out(exit_station)
 			expect(subject.journeys).to eq ({entry_station => exit_station})
 		end
-
 
 end
