@@ -1,6 +1,7 @@
 require 'oystercard'
 
 describe OysterCard do
+	let(:entry_station) {double :entry_station}
 
 	context "card balance" do
 	  it 'has a balance of zero' do
@@ -22,33 +23,35 @@ describe OysterCard do
       subject.top_up(1)
     end
 
-		it "#touch_in" do
-			expect{subject.touch_in}.to change{subject.card_status}.to(true)
-		end
+			it 'in_journey is true after touch in' do
+				subject.touch_in(entry_station)
+				expect(subject).to be_in_journey
+			end
 
-		it "#touch_out" do
-			expect{subject.touch_out}.to change{subject.card_status}.to(false)
-		end
+			it 'in_journey is false after touch out' do
+				subject.touch_out
+				expect(subject).not_to be_in_journey
+			end
 
-		it 'in_journey is true after touch in' do
-			subject.touch_in
-			expect(subject).to be_in_journey
-		end
+	    it 'deducts #{OysterCard::MIN_FARE} fare' do
+				subject.touch_in(entry_station)
+				expect{subject.touch_out}.to change{subject.balance}.by(-1)
+			end
 
-		it 'in_journey is false after touch out' do
-			subject.touch_out
-			expect(subject).not_to be_in_journey
-		end
+      it 'touches in at an entry station' do
+      	subject.touch_in(entry_station)
+        expect(subject.entry_station).to eq entry_station
+      end
 
-    it 'deducts #{OysterCard::MIN_FARE} fare' do
-			subject.touch_in
-			expect{subject.touch_out}.to change{subject.balance}.by(-1)
-		end
-
+      it 'forgets entry_station on touch_out' do
+      	subject.touch_in(entry_station)
+        subject.touch_out
+        expect(subject.entry_station).to eq nil
+      end
 	end
 
 	  it "require a minimum fare of 1" do
-      expect{ subject.touch_in}.to raise_error "minimum fare is #{OysterCard::MIN_FARE} pound"
+      expect{ subject.touch_in(entry_station)}.to raise_error "minimum fare is #{OysterCard::MIN_FARE} pound"
     end
 
 end
